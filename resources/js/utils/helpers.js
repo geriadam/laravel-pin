@@ -8,7 +8,7 @@ export const getError = (error) => {
   }
 
   if (!error.response) {
-    console.error(`API ${error.config.url} not found`);
+    console.error(`API ${error.config?.url} not found`);
     return errorMessage;
   }
   if (process.env.NODE_ENV === "development") {

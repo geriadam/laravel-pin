@@ -7,6 +7,10 @@
         <PinItem :index="index" :pin="pin" />
       </div>
     </div>
+    <div v-if="nextPageUrl" class="flex justify-center">
+      <button @click="handleLoadMore()" class="px-5 py-3 text-blue-100 bg-blue-800 rounded-md text-base font-medium"> Load
+        More </button>
+    </div>
     <div class="flex justify-center" v-if="!loading && !pins.length">
       <img src="@/assets/empty-data.png" />
     </div>
@@ -23,11 +27,16 @@ export default {
     FlashMessage
   },
   computed: {
-    ...mapGetters("pinModeration", ["loading", "error", "pins", "links"]),
+    ...mapGetters("pinModeration", ["loading", "error", "pins", "nextPageUrl"]),
   },
   mounted() {
     store.dispatch("pinModeration/getPins", 1)
   },
+  methods: {
+    handleLoadMore() {
+      store.dispatch("pinModeration/paginatePins")
+    }
+  }
 }
 
 </script>

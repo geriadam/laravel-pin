@@ -14,7 +14,7 @@ class PinCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        $perPage = 10;
+        $perPage = 20;
         return $this->collection->paginate($perPage);
     }
 }

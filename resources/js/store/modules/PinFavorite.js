@@ -3,15 +3,9 @@ import PinService from "@/services/PinService";
 
 export const namespaced = true;
 
-function setPaginatedPins(commit, response) {
-  commit("SET_PINS", response.data.data);
-  commit("SET_LINKS", response.data.links);
-  commit("SET_LOADING", false);
-}
-
 export const state = {
   pins: [],
-  links: null,
+  nextPageUrl: null,
   loading: false,
   error: null,
 };
@@ -20,8 +14,8 @@ export const mutations = {
   SET_PINS(state, pins) {
     state.pins = pins;
   },
-  SET_LINKS(state, links) {
-    state.links = links;
+  SET_NEXT_PAGE_URL(state, nextPageUrl) {
+    state.nextPageUrl = nextPageUrl;
   },
   SET_LOADING(state, loading) {
     state.loading = loading;
@@ -36,18 +30,23 @@ export const actions = {
     commit("SET_LOADING", true);
     PinService.getFavorites(page)
       .then((response) => {
-        setPaginatedPins(commit, response.data);
+        commit("SET_PINS", response.data.data.data);
+        commit("SET_NEXT_PAGE_URL", response.data.data.next_page_url);
+        commit("SET_LOADING", false);
       })
       .catch((error) => {
         commit("SET_LOADING", false);
         commit("SET_ERROR", getError(error));
       });
   },
-  paginatePins({ commit }, link) {
+  paginatePins({ commit, state }) {
     commit("SET_LOADING", true);
-    PinService.paginatePins(link)
+    PinService.paginatePins(state.nextPageUrl)
       .then((response) => {
-        setPaginatedPins(commit, response.data);
+        const pins = [...state.pins, ...response.data.data.data]
+        commit("SET_PINS", pins);
+        commit("SET_NEXT_PAGE_URL", response.data.data.next_page_url);
+        commit("SET_LOADING", false);
       })
       .catch((error) => {
         commit("SET_LOADING", false);
@@ -60,8 +59,8 @@ export const getters = {
   pins: (state) => {
     return state.pins;
   },
-  links: (state) => {
-    return state.links;
+  nextPageUrl: (state) => {
+    return state.nextPageUrl;
   },
   loading: (state) => {
     return state.loading;
