@@ -22,10 +22,8 @@ class AuthController extends Controller
         DB::begintransaction();
 
         try {
-            $request->request->add([
-                'name' => $request->email,
-                'password' => Hash::make($request->password)
-            ]);
+            $request->merge(['name' => $request->email]);
+            $request->merge(['password' => Hash::make($request->password)]);
             $user = User::create($request->all());
             DB::commit();
             return $this->sendResponse($user, "User Created Successfully", Response::HTTP_CREATED);
@@ -54,6 +52,12 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             return $this->sendError($th->getMessage());
         }
+    }
+
+    public function user()
+    {
+        $user = auth('sanctum')->user();
+        return $this->sendResponse($user, "User get Successfully", Response::HTTP_OK);
     }
 
     public function logout(Request $request)

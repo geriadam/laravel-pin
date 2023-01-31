@@ -24,9 +24,9 @@
       <div class="flex flex-col gap-5">
         <div class="col-span-12">
           <label for="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload Image</label>
-          <div id="preview" class="mb-2">
+          <div id="preview" class="mb-2" v-if="imageData">
             <figure class="relative h-60 w-60 flex justify-center mx-auto cursor-pointer" @click="toggleModal">
-              <img class="absolute w-full h-full object-cover" v-if="imageData" :src="imageData" />
+              <img class="absolute w-full h-full object-cover" :src="imageData" />
             </figure>
           </div>
           <button
@@ -68,7 +68,7 @@ export default {
   data() {
     return {
       imageData: null,
-      showModal: true
+      showModal: false
     }
   },
   methods: {

@@ -26,6 +26,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
             Route::middleware(['auth:sanctum'])
                 ->group(function () {
                     Route::get('logout', 'AuthController@logout')->name('logout');
+                    Route::get('user', 'AuthController@user')->name('user');
                 });
         });
 

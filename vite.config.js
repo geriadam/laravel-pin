@@ -24,4 +24,7 @@ export default defineConfig({
             '@': '/resources/js',
         },
     },
+    commonjsOptions: {
+        esmExternals: true,
+    },
 });

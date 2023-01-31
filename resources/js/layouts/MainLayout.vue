@@ -21,10 +21,15 @@ import { RouterLink, RouterView } from 'vue-router'
         </svg>
       </button>
       <div class="hidden lg:flex items-center space-x-4">
-        <span class="pr-6">
-          admin@mail.com
+        <span class="pr-2" v-if="loggedIn">
+          {{ authUser?.email }}
         </span>
-        <router-link to="/favorites" custom v-slot="{ navigate }">
+        <router-link to="/moderation" custom v-slot="{ navigate }" v-if="loggedIn && isAdmin">
+          <button @click="navigate" class="px-4 py-2 text-white bg-blue-400 rounded-md">
+            Moderation
+          </button>
+        </router-link>
+        <router-link to="/favorites" custom v-slot="{ navigate }" v-if="loggedIn">
           <button @click="navigate"
             class="flex flex-row gap-2 items-center justify-center px-4 py-2 text-gray-800 bg-white border border-gray-800 rounded-md">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="15px"
@@ -39,16 +44,17 @@ import { RouterLink, RouterView } from 'vue-router'
             <span>Favorites</span>
           </button>
         </router-link>
-        <router-link to="/upload" custom v-slot="{ navigate }">
+        <router-link to="/upload" custom v-slot="{ navigate }" v-if="loggedIn">
           <button @click="navigate" class="px-4 py-2 text-gray-100 bg-gray-400 rounded-md">
             Upload
           </button>
         </router-link>
-        <router-link to="/login" custom v-slot="{ navigate }">
+        <router-link to="/login" custom v-slot="{ navigate }" v-if="!loggedIn">
           <button @click="navigate" class="px-4 py-2 text-blue-100 bg-blue-800 rounded-md">
             Login
           </button>
         </router-link>
+        <Logout v-if="loggedIn" />
       </div>
     </nav>
   </header>
@@ -58,4 +64,14 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import Logout from "@/components/Logout.vue";
+export default {
+  components: {
+    Logout
+  },
+  computed: {
+    ...mapGetters("auth", ["authUser", "isAdmin", "loggedIn"]),
+  },
+}
 </script>
