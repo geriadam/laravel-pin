@@ -15,5 +15,11 @@ export default {
   },
   upload(payload) {
     return API.apiClient.post('/pins', payload);
+  },
+  publishPin(id) {
+    return API.apiClient.get(`/pins/publish/${id}`);
+  },
+  likePin(id) {
+    return API.apiClient.get(`/pins/like/${id}`);
   }
 };
