@@ -14,18 +14,11 @@ class PinController extends Controller
 {
     use ResponseApi;
 
-    private $perPage;
-
-    public function __construct()
-    {
-        $this->perPage = 20;
-    }
-
     public function index()
     {
         $pins = Pin::publish()
             ->latest()
-            ->paginate($this->perPage);
+            ->get();
         return $this->sendResponse(new PinCollection($pins), "Get Index Successfully", Response::HTTP_OK);
     }
 
@@ -33,7 +26,7 @@ class PinController extends Controller
     {
         $pins = Pin::draft()
             ->latest()
-            ->paginate($this->perPage);
+            ->get();
         return $this->sendResponse(new PinCollection($pins), "Get Index Successfully", Response::HTTP_OK);
     }
 
@@ -45,15 +38,14 @@ class PinController extends Controller
             ->whereHas('likers', function ($query) use ($user) {
                 return $query->whereUserId($user->id);
             })
-            ->paginate($this->perPage);
+            ->get();
         return $this->sendResponse(new PinCollection($pins), "Get Index Successfully", Response::HTTP_OK);
     }
 
     public function store(PinRequest $request)
     {
-        $request->request->add([
-            'user_id' => auth('sanctum')->user()->id,
-        ]);
+        $request->merge(['user_id' => auth('sanctum')->user() ? auth('sanctum')->user()->id : null]);
+        $request->merge(['is_publish' => auth('sanctum')->user() ? true : false]);
         $pin = Pin::create($request->all());
         return $this->sendResponse(new PinResource($pin), "Upload pin Successfully", Response::HTTP_CREATED);
     }

@@ -31,16 +31,16 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
         });
 
     // Route Pins
+    Route::get('/pins', 'Api\PinController@index')->name('pins.index');
+    Route::post('/pins', 'Api\PinController@store')->name('pins.store');
     Route::namespace('Api')
         ->name('pins.')
         ->prefix('pins')
         ->middleware(['auth:sanctum'])
         ->group(function () {
-            Route::get('/', 'PinController@index')->name('index');
             Route::get('/moderation', 'PinController@moderation')->name('moderation');
             Route::get('/favorites', 'PinController@favorites')->name('favorites');
             Route::get('/like/{pin}', 'PinController@like')->name('like');
             Route::get('/publish/{pin}', 'PinController@publish')->name('publish');
-            Route::post('/', 'PinController@store')->name('store');
         });
 });

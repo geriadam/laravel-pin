@@ -44,7 +44,7 @@ import { RouterLink, RouterView } from 'vue-router'
             <span>Favorites</span>
           </button>
         </router-link>
-        <router-link to="/upload" custom v-slot="{ navigate }" v-if="loggedIn">
+        <router-link to="/upload" custom v-slot="{ navigate }">
           <button @click="navigate" class="px-4 py-2 text-gray-100 bg-gray-400 rounded-md">
             Upload
           </button>

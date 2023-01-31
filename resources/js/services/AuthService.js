@@ -2,15 +2,21 @@ import axios from "axios";
 import store from "@/store";
 
 export const authClient = axios.create({
-  baseURL: '/api',
-  withCredentials: true, // required to handle the CSRF token
+  baseURL: '/api'
 });
 
 /*
  * Add a response interceptor
  */
 authClient.interceptors.response.use(
-  (response) => {
+  async (response) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      response.headers['Authorization'] = 'Bearer ' + token;
+    }
+    response.headers['Content-Type'] = 'application/json';
+    response.headers['Accept'] = 'application/json';
+    delete response.headers['X-XSRF-TOKEN']
     return response;
   },
   function (error) {
@@ -28,7 +34,6 @@ authClient.interceptors.response.use(
 
 export default {
   async login(payload) {
-    await authClient.get("/sanctum/csrf-cookie");
     return authClient.post("/auth/login", payload);
   },
   logout() {
@@ -38,7 +43,6 @@ export default {
     return authClient.get("/auth/user");
   },
   async registerUser(payload) {
-    await authClient.get("/sanctum/csrf-cookie");
     return authClient.post("/auth/register", payload);
   },
 };

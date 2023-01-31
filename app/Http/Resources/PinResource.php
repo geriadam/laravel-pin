@@ -21,6 +21,7 @@ class PinResource extends JsonResource
             'description' => $this->description,
             'image' => $this->image,
             'is_publish' => $this->is_publish,
+            'like_count' => $this->likers()->count(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

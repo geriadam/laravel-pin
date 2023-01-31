@@ -3,7 +3,7 @@ export default function guest({ next, store }) {
   if (storageItem === "isNotGuest" && !store.getters["auth/authUser"]) {
     store.dispatch("auth/getAuthUser").then(() => {
       if (store.getters["auth/authUser"]) {
-        next({ name: "dashboard" });
+        next('/');
       } else {
         store.dispatch("auth/setGuest", { value: "isGuest" });
         next();

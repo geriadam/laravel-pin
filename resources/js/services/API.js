@@ -7,15 +7,21 @@ import axios from "axios";
 import store from "@/store";
 
 export const apiClient = axios.create({
-  baseURL: '/api',
-  withCredentials: true, // required to handle the CSRF token
+  baseURL: '/api'
 });
 
 /*
  * Add a response interceptor
  */
 apiClient.interceptors.response.use(
-  (response) => {
+  async (response) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      response.headers['Authorization'] = 'Bearer ' + token;
+    }
+    response.headers['Content-Type'] = 'application/json';
+    response.headers['Accept'] = 'application/json';
+    delete response.headers['X-XSRF-TOKEN']
     return response;
   },
   function (error) {

@@ -25,7 +25,7 @@ const routes = [
     path: '/upload',
     component: () => import('@/pages/Upload.vue'),
     name: 'Upload',
-    meta: { middleware: [auth] },
+    meta: { middleware: [guest] },
   },
   {
     path: '/moderation',

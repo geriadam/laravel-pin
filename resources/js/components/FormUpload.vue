@@ -19,8 +19,9 @@
     </div>
   </div>
   <div v-if="showModal" class="opacity-25 fixed inset-0 z-40 bg-black"></div>
-  <form class="space-y-4" action="#" method="POST">
+  <form class="space-y-4" @submit.prevent="upload">
     <div class="rounded-md shadow-sm -space-y-px">
+      <FlashMessage :message="message" :error="error" />
       <div class="flex flex-col gap-5">
         <div class="col-span-12">
           <label for="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload Image</label>
@@ -40,15 +41,11 @@
           <input class="file-input hidden" ref="fileInput" type="file" @input="onSelectFile">
         </div>
         <div class="col-span-12">
-          <label for="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
-          <input type="text"
-            class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <FormInput type="text" label="Title" name="title" v-model="title" placeholder="Fantastic Image"
+            class="mb-2" />
         </div>
         <div class="col-span-12">
-          <label for="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-          <textarea
-            class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          </textarea>
+          <FormTextArea label="Description" name="description" v-model="description" class="mb-2" />
         </div>
         <div class="col-span-12">
           <button type="submit"
@@ -63,15 +60,54 @@
   </form>
 </template>
 <script>
+import { getError } from "@/utils/helpers";
+import PinService from "@/services/PinService";
+import FormInput from "@/components/Form/FormInput.vue";
+import FormTextArea from "@/components/Form/FormTextArea.vue";
+import FlashMessage from "@/components/FlashMessage.vue";
 export default {
   name: 'FormUpload',
+  components: {
+    FormInput,
+    FlashMessage,
+    FormTextArea
+  },
   data() {
     return {
+      title: null,
+      description: null,
       imageData: null,
-      showModal: false
+      files: null,
+      showModal: false,
+      message: null,
+      error: null,
     }
   },
   methods: {
+    clearData() {
+      this.title = null
+      this.description = null,
+      this.imageData = null
+      this.files = null
+    },
+    async upload() {
+      const formData = new FormData();
+      formData.append('title', this.title);
+      formData.append('description', this.description);
+      formData.append('image', this.files);
+      this.error = null;
+      try {
+        PinService.upload(formData)
+          .then(() => {
+            this.message = "File uploaded.";
+            this.$emit("fileUploaded");
+            this.clearData()
+          })
+          .catch((error) => (this.error = getError(error)));
+      } catch (error) {
+        this.error = getError(error);
+      }
+    },
     onSelectFile() {
       const input = this.$refs.fileInput
       const files = input.files
@@ -81,6 +117,7 @@ export default {
           this.imageData = e.target.result
         }
         reader.readAsDataURL(files[0])
+        this.files = files[0]
         this.$emit('input', files[0])
       }
     },

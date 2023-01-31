@@ -14,6 +14,7 @@ export default {
   name: "Logout",
   methods: {
     logout() {
+      localStorage.removeItem('access_token')
       this.$store.dispatch("auth/logout");
     },
   },
