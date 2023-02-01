@@ -17,10 +17,10 @@
         </div>
       </div>
       <div v-if="tab === 1" class="bg-white w-full rounded overflow-hidden shadow-xl p-5">
-        <FormLogin />
+        <FormLogin :loading="loading" :setLoading="setLoading" :getLoading="getLoading" />
       </div>
       <div v-if="tab === 2" class="bg-white w-full rounded overflow-hidden shadow-xl p-5">
-        <FormRegister />
+        <FormRegister :loading="loading" :setLoading="setLoading" :getLoading="getLoading" />
       </div>
     </div>
   </div>
@@ -35,12 +35,19 @@ export default {
   data() {
     return {
       tab: 1,
+      loading: false
     };
   },
   methods: {
     currentTab: function (tabNumber) {
       this.tab = tabNumber;
     },
+    setLoading(value) {
+      this.loading = value
+    },
+    getLoading() {
+      return this.loading
+    }
   },
 };
 </script>
