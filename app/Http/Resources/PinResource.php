@@ -16,7 +16,7 @@ class PinResource extends JsonResource
     {
         $isLike = false;
         $user = auth('sanctum')->user();
-        if ($user && $this->isLikedBy($user)) {
+        if ($user && $this !== null && $this->isLikedBy($user)) {
             $isLike = true;
         }
         return [

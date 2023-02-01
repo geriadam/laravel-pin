@@ -48,7 +48,7 @@ class Pin extends Model
 
     public function setImageAttribute($value)
     {
-        if (!is_string($value)) {
+        if (!is_string($value) && is_object($value)) {
             $filename = Str::random(20) . "." . $value->getClientOriginalExtension();
             $value = \Storage::disk('pin')->put($filename, \File::get($value)) ? $filename : 'default.png';
         }
